@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script>
+      var length = 5;
+      var arr = new Array(length);
+      arr = ["Mustafa", "Ali", "Rana", "Huda", "Ramzi"];
+      var passwords = new Array(length);
+      passwords = ["", "", "", "", ""];
+
+      function start() {
+        generateTable();
+        listener();
+        AssignPassToUser();
+      }
+      function listener() {
+        var show = document.getElementById("show");
+        show.addEventListener("click", showPassword);
+
+        var sortUser1 = document.getElementById("sort");
+        sortUser1.addEventListener("click", sortUser, false);
+
+        var clear = document.getElementById("clear");
+        clear.addEventListener("click", clearTable, false);
+
+        for (var i = 0; i < length; i++) {
+          var dlt = document.getElementById("row" + i);
+          dlt.addEventListener("click", deleteRow.bind(event, i), false);
+        }
+        for (var i = 0; i < length; i++) {
+          var edt = document.getElementById("edt" + i);
+          edt.addEventListener("click", EditRow.bind(event, i), false);
+        }
+        var saveBtn = document.getElementById("save");
+        saveBtn.addEventListener("click", Save.bind(event, i), false);
+      }
+
+      function generateTable() {
+        box = "";
+        box += "<table>";
+        for (var i = 0; i < length; i++) {
+          if ((i + 1) % 2 == 1)
+            box +=
+              "<tr style=' background-color : #ADD8E6;' > <td>" +
+              arr[i] +
+              "</td> <td><input type='button' value='Delete' id='row" +
+              i +
+              "' /> <input type='button' value='Edit' id='edt" +
+              i +
+              "' /> </td> </tr> ";
+          else {
+            box +=
+              "<tr style=' background-color : white;' > <td>" +
+              arr[i] +
+              "</td> <td><input type='button' value='Delete' id='row" +
+              i +
+              "' /> <input type='button' value='Edit' id='edt" +
+              i +
+              "' /> </td> </tr> ";
+          }
+        }
+        box += "</table>";
+        var tbl = document.getElementById("table");
+        tbl.innerHTML = box;
+      }
+      function showPassword() {
+        pass = document.getElementById("pass");
+        if (pass.type == "password") pass.type = "text";
+        else pass.type = "password";
+      }
+      function sortUser() {
+        var len = arr.length;
+
+        for (var i = len - 1; i >= 0; i--) {
+          for (var j = 1; j <= i; j++) {
+            if (arr[j - 1] > arr[j]) {
+              var temp = arr[j - 1];
+              var tempPass = passwords[j - 1];
+              passwords[j - 1] = passwords[j];
+              passwords[j] = tempPass;
+              arr[j - 1] = arr[j];
+              arr[j] = temp;
+            }
+          }
+          start();
+        }
+      }
+      function clearTable() {
+        var d = document.getElementById("table");
+        d.innerHTML = "";
+        var text = document.getElementById("un");
+        text.value = "";
+        var pass = document.getElementById("pass");
+        pass.value = "";
+      }
+
+      function AssignPassToUser() {
+        for (var x = 0; x < length; x++) {
+          if (passwords[x] == "") passwords[x] = generatePassword();
+        }
+      }
+      function generatePassword() {
+        var chars =
+          "0123456789abcdefghijklmnopqrstuvwxyz!@#$%^&*()ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        var passLength = 8;
+        var pass = "";
+        for (var i = 0; i < passLength; i++) {
+          var randomNumber = Math.floor(Math.random() * chars.length);
+          pass += chars[randomNumber];
+        }
+        return pass;
+      }
+      function deleteRow(i) {
+        for (var x = i; x < length; x++) {
+          arr[x] = arr[x + 1];
+        }
+        for (var x = i; x < length; x++) {
+          passwords[x] = passwords[x + 1];
+        }
+        length--;
+        start();
+      }
+      function EditRow(i) {
+        var text = document.getElementById("un");
+        text.value = arr[i];
+        var pass = document.getElementById("pass");
+        pass.value = passwords[i];
+
+        var saveBtn = document.getElementById("save");
+        saveBtn.addEventListener("click", Save.bind(event, i), false);
+      }
+
+      function Save(i) {
+        var text = document.getElementById("un");
+        arr[i] = text.value;
+        var pass = document.getElementById("pass");
+        passwords[i] = pass.value;
+        start();
+      }
+    </script>
+  </head>
+  <body onload="start()">
+    <h1>Admin page - Edit Users / Passwords</h1>
+    <p>UserName: <input type="text" id="un" /></p>
+    <p>Password: <input type="password" id="pass" /></p>
+    <p>
+      <input type="button" value="Save" id="save" />
+      <input type="button" value="Clear All" id="clear" />
+      <input type="checkbox" id="show" /> <span>Show Password</span>
+      <input type="checkbox" id="sort" /> <span>Sort UserName</span>
+    </p>
+    <div id="table"></div>
+  </body>
+</html>
